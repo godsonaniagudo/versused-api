@@ -37,6 +37,7 @@ const schema = mongoose.Schema({
         max : 1024,
        default : ""
     },
+    
     profilePic : {
         type : "String",
         min  : 6,
