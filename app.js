@@ -24,6 +24,10 @@ app.use("/auth" , authRoute)
 app.use("/user", userRoute)
 
 
-http.listen(8085, () => {
+// http.listen(8085, () => {
+//     console.log("Server started on port 8085");
+// })
+
+http.listen(process.env.PORT || 8085, () => {
     console.log("Server started on port 8085");
 })
