@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
 
     const newUser = await user.save();
 
-    var url = "http://localhost:3000/verifyEmail/" + verificationString;
+    var url = "https://versused-api.herokuapp.com/verifyEmail/" + verificationString;
 
     const sgMail = require("@sendgrid/mail");
     sgMail.setApiKey(process.env.SENDGRID_KEY);
@@ -172,7 +172,7 @@ router.post("/password/reset/send" , async(req,res) => {
   }, 1440000)
 
 
-  var url = "http://localhost:3000/resetPassword/" + resetString
+  var url = "https://versused-api.herokuapp.com/resetPassword/" + resetString
 
 
   const sgMail = require('@sendgrid/mail');
