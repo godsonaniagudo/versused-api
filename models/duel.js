@@ -23,13 +23,13 @@ const schema = mongoose.Schema({
         type : "Number",
         min : 1,
         max : 1034,
-        required : true
+        default: 3
     },
     duration : {
-        type : "String",
+        type : "Number",
         min : 1,
         max : 1034,
-        required : true
+        default: 1
     },
     winner : {
         type : "Object",
@@ -62,8 +62,7 @@ const schema = mongoose.Schema({
     },
     coverPicture : {
         type : "String",
-        min : 6,
-        required : true
+        min : 6
     }
 })
 

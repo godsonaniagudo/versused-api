@@ -62,9 +62,9 @@ router.post("/displayPicture/set", authenticateUser, async (req, res) => {
 });
 
 router.post("/preferredCategories/set", authenticateUser, async (req,res) => {
-  console.log(req.body);
+  console.log(req.body.selectedCategories);
   try {
-    const updatePreferredCategories = User.findOneAndUpdate({_id : req.user.id} , {categories : req.body.selectedCategories}, {useFindAndModify : false})
+    const updatePreferredCategories = await User.findByIdAndUpdate({_id : req.user.id} , {$addToSet : {categories : req.body.selectedCategories}}, {useFindAndModify : false})
     if(updatePreferredCategories){
       res.status(200).send({response : "OK"})
     } else {

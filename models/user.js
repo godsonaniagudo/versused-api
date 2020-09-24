@@ -48,10 +48,7 @@ const schema = mongoose.Schema({
         type : "String",
         default : "inactive"
     },
-    categories : {
-        type : "Array",
-        default : []
-    },
+    categories : [String],
     date : {
         type : "Date",
         default : Date.now()

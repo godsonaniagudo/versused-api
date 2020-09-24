@@ -11,6 +11,7 @@ require("dotenv").config()
 const authRoute = require("./routes/auth")
 const userRoute =  require("./routes/user")
 const duelRoute = require("./routes/duel")
+const duelsRoute = require("./routes/duels")
 
 
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 50000 }))
@@ -29,6 +30,7 @@ mongoose.connect(process.env.MONGO_CONNECT_URL, { useUnifiedTopology: true , use
 app.use("/auth" , authRoute)
 app.use("/user", userRoute)
 app.use("/duel", duelRoute)
+app.use("/duels", duelsRoute)
 
 
 // http.listen(8085, () => {

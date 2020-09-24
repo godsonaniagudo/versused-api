@@ -12,7 +12,7 @@ router.use(upload.single("video"))
 
 
 router.post("/uploadVideo", authenticateUser, async (req, res) => {
-  
+
 
   try {
     const upload_video = await uploadVideo(req)
@@ -58,57 +58,7 @@ router.post("/new", authenticateUser, async(req,res) => {
                 // console.log(error);
             } else {
 
-                req.body.coverPicture = result.secure_url
-
-                const detailsToValidate = {
-                  title : req.body.title,
-                  description : req.body.description,
-                  category : req.body.category
-                }
-
-                const schema = joi.object({
-                  title : joi.string().min(6).max(1024),
-                  description : joi.string().min(10).max(1024),
-                  category: joi.string().max(1024).min(3)
-                })
-
-                const validate = await schema.validate(detailsToValidate)
-
-                if(validate.error) return res.status(200).send({error : "Could not create your duel. Check the details you entered."})
-
-                if(req.body.rounds === ""){
-                  req.body.rounds = 3
-                }
-
-                if(req.body.duration === ""){
-                  req.body.duration === "1 Day"
-                }
-
-
-                const details = new Duel ({
-                  title : req.body.title,
-                  description : req.body.description,
-                  video : req.body.video,
-                  coverPicture : req.body.coverPicture,
-                  category : req.body.category,
-                  rounds : req.body.rounds,
-                  duration : req.body.duration,
-                  creator : req.body.creator
-                })
-
-                
-
-                try {
-                  const createDuel = await details.save()
-
-                  if(createDuel){
-                    res.status(200).send({response : createDuel._id})
-                  } else {
-                    res.status(200).send({error : "Could not create duel. Please try again."})
-                  }
-                } catch (error) {
-                  res.status(200).send({error : "Could not create duel. Please try again."})
-                }
+                saveDuel(req, res, result.secure_url)
 
 
 
@@ -116,13 +66,63 @@ router.post("/new", authenticateUser, async(req,res) => {
             }
         })
     } else {
-
+      saveDuel(req, res, "")
     }
 })
 
 
-async function saveDuel (params) {
-    
+async function saveDuel (req, res, result) {
+
+
+  req.body.coverPicture = result
+
+  const detailsToValidate = {
+    title : req.body.title,
+    description : req.body.description,
+    category : req.body.category
+  }
+
+  const schema = joi.object({
+    title : joi.string().min(6).max(1024),
+    description : joi.string().min(10).max(1024),
+    category: joi.string().max(1024).min(3)
+  })
+
+  const validate = await schema.validate(detailsToValidate)
+
+  if(validate.error) return res.status(200).send({error : "Could not create your duel. Check the details you entered."})
+
+
+
+  const details = new Duel ({
+    title : req.body.title,
+    description : req.body.description,
+    video : req.body.video,
+    coverPicture : req.body.coverPicture,
+    category : req.body.category,
+    rounds : req.body.rounds,
+    duration : req.body.duration,
+    creator : req.body.creator
+  })
+
+  
+
+  try {
+    const createDuel = await details.save()
+
+
+    if(createDuel){
+      res.status(200).send({response : createDuel._id})
+    } else {
+      console.log("Didn't create");
+      res.status(200).send({error : "Could not create duel. Please try again."})
+    }
+  } catch (error) {
+
+    res.status(200).send({error : "Could not create duel. Please try again."})
+  }
 }
+
+
 
 module.exports = router;
