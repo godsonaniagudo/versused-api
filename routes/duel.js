@@ -123,6 +123,25 @@ async function saveDuel (req, res, result) {
   }
 }
 
+router.post("/", async (req,res) => {
+  if(req.body.duelID && req.body.duelID !== ""){
+    
+    try {
+      const duel = await Duel.findOne({_id : req.body.duelID})
+
+      if(duel){
+        return res.status(200).send({duel})
+      } else {
+        return res.status(200).send({error : "Duel not found."})
+      }
+    } catch (error) {
+      return res.status(200).send({error : "Could not retrieve Duel"})
+    }
+
+    
+  }
+})
+
 
 
 module.exports = router;

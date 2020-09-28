@@ -76,4 +76,27 @@ router.post("/preferredCategories/set", authenticateUser, async (req,res) => {
 })
 
 
+router.post("/profile", async (req,res) => {
+  if(req.body.profileID && req.body.profileID !== ""){
+    const user = await User.findOne({_id : req.body.profileID})
+
+    if(user){
+      const userDetails = {
+        name : user.name,
+        alias: user.alias,
+        connections : user.connections,
+        losses: user.losses,
+        wins : user.wins,
+        draws : user.draws,
+        profilePic : user.profilePic
+      }
+
+      return res.status(200).send({user : userDetails})
+    } else {
+      return res.status(200).send({error : "User does not exist."})
+    }
+  }
+})
+
+
 module.exports = router;

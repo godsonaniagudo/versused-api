@@ -49,6 +49,22 @@ const schema = mongoose.Schema({
         default : "inactive"
     },
     categories : [String],
+    wins : {
+        type : "Number",
+        default : 0
+    },
+    losses : {
+        type : "Number",
+        default : 0
+    },
+    draws : {
+        type : "Number",
+        default : 0
+    },
+    connections : {
+        type : "Number",
+        default : 0
+    },
     date : {
         type : "Date",
         default : Date.now()
