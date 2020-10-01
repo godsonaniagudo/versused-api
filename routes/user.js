@@ -2,6 +2,7 @@ const { async } = require("crypto-random-string");
 const authenticateUser = require("../authenticate/authenticateUser");
 const cloudinary = require("../configs");
 const User = require("../models/user");
+const Connection = require("../models/connection")
 
 const router = require("express").Router();
 
@@ -22,7 +23,8 @@ router.get("/details", authenticateUser, async (req, res) => {
       if (userDetails.accountStatus === "inactive") {
         return res.status(400).send({ error: "Account inactive." });
       } else {
-        return res.status(200).send({ response: userDetails });
+        const connections = await Connection.find({$or : [{id1 : req.user.id} , {id2 : req.user.id}]} , {connectionStatus : "connected"}).select("id1Details id2Details -_id")
+        return res.status(200).send({ response: userDetails, connections : connections });
       }
     } else {
       res

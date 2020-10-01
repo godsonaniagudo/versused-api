@@ -1,6 +1,8 @@
 const router = require("express").Router()
+const { async } = require("crypto-random-string")
 const authenticateUser = require("../authenticate/authenticateUser")
 const Duel = require("../models/duel")
+const DuelRequest = require("../models/duelRequest")
 const User = require("../models/user")
 
 router.get("/recommended", authenticateUser, async (req,res) => {
@@ -46,6 +48,33 @@ router.post("/byCategory", authenticateUser, async (req,res) => {
         }
     }
     
+})
+
+router.get("/requests", authenticateUser, async (req,res) => {
+   const requests = await DuelRequest.find({recipient : req.user.id})
+   
+   if(requests){
+       res.status(200).send({requests : requests})
+   } else {
+       res.status(200).send({none : "You have no pending requests."})
+   }
+})
+
+router.post("/accept", authenticateUser, async (req,res) => {
+    const duel = await Duel.findOneAndUpdate({_id : req.body.duelID},  {opponent : req.body.recipientDetails})
+   
+
+    if(duel){
+        const removeRequest = await DuelRequest.findOneAndDelete({duelID : req.body.duelID , recipient : req.user.id})
+
+        res.status(200).send({accepted : true})
+    }
+})
+
+router.post("/refuse", authenticateUser, async (req,res) => {
+    const removeRequest = await DuelRequest.findOneAndDelete({duelID : req.body.duelID , recipient : req.user.id})
+
+    res.status(200).send({refused : true})
 })
 
 module.exports = router

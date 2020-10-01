@@ -100,7 +100,7 @@ router.post("/remove", authenticateUser, async (req,res) => {
     }
 })
 
-router.post("/reject", authenticateUser, async (req,res) => {
+router.post("/refuse", authenticateUser, async (req,res) => {
     try {
         const reject = await Connection.findOneAndDelete({$or : [{id1 : req.user.id , id2 : req.body.profileID} , {id1 : req.body.profileID , id2 : req.user.id}]} , {connectionStatus : "connected"})
 

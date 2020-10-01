@@ -6,6 +6,7 @@ const upload = multer({ dest: 'uploads/' })
 const streamifier = require("streamifier");
 const joi = require("joi")
 const Duel = require("../models/duel")
+const DuelRequest = require("../models/duelRequest")
 const { async } = require("crypto-random-string");
 
 router.use(upload.single("video"))
@@ -92,7 +93,13 @@ async function saveDuel (req, res, result) {
 
   if(validate.error) return res.status(200).send({error : "Could not create your duel. Check the details you entered."})
 
+  var open = false
 
+  if(req.body.opponent && Object.entries(req.body.opponent) !== 0){
+    open = false
+  } else {
+    open = true
+  }
 
   const details = new Duel ({
     title : req.body.title,
@@ -102,7 +109,8 @@ async function saveDuel (req, res, result) {
     category : req.body.category,
     rounds : req.body.rounds,
     duration : req.body.duration,
-    creator : req.body.creator
+    creator : req.body.creator,
+    open : open
   })
 
   
@@ -110,11 +118,23 @@ async function saveDuel (req, res, result) {
   try {
     const createDuel = await details.save()
 
-
     if(createDuel){
+      const request = new DuelRequest({
+        duelID : createDuel._id,
+        sender : req.user.id,
+        recipient : req.body.opponent.id,
+        senderDetails : req.body.creator,
+        recipientDetails : req.body.opponent,
+        duelTitle : req.body.title,
+        coverPicture : req.body.coverPicture
+      })
+
+      const sendRequest = await request.save()
+
       res.status(200).send({response : createDuel._id})
+      
     } else {
-      console.log("Didn't create");
+
       res.status(200).send({error : "Could not create duel. Please try again."})
     }
   } catch (error) {

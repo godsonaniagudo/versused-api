@@ -60,6 +60,10 @@ const schema = mongoose.Schema({
         min : 6,
         required : true
     },
+    open : {
+        type : "Boolean",
+        required : true
+    },
     coverPicture : {
         type : "String",
         min : 6
