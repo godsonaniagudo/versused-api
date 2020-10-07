@@ -13,6 +13,7 @@ const userRoute =  require("./routes/user")
 const duelRoute = require("./routes/duel")
 const duelsRoute = require("./routes/duels")
 const connectionRoute = require("./routes/connection")
+const notificationsRoute = require("./routes/notifications")
 
 
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 50000 }))
@@ -33,6 +34,7 @@ app.use("/user", userRoute)
 app.use("/duel", duelRoute)
 app.use("/duels", duelsRoute)
 app.use("/connections", connectionRoute)
+app.use("/notifications", notificationsRoute)
 
 
 // http.listen(8085, () => {

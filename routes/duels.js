@@ -60,21 +60,6 @@ router.get("/requests", authenticateUser, async (req,res) => {
    }
 })
 
-router.post("/accept", authenticateUser, async (req,res) => {
-    const duel = await Duel.findOneAndUpdate({_id : req.body.duelID},  {opponent : req.body.recipientDetails})
-   
 
-    if(duel){
-        const removeRequest = await DuelRequest.findOneAndDelete({duelID : req.body.duelID , recipient : req.user.id})
-
-        res.status(200).send({accepted : true})
-    }
-})
-
-router.post("/refuse", authenticateUser, async (req,res) => {
-    const removeRequest = await DuelRequest.findOneAndDelete({duelID : req.body.duelID , recipient : req.user.id})
-
-    res.status(200).send({refused : true})
-})
 
 module.exports = router
