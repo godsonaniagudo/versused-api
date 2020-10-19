@@ -67,6 +67,15 @@ const schema = mongoose.Schema({
     coverPicture : {
         type : "String",
         min : 6
+    },
+    lastPoster : {
+        type : "String",
+        min : 6,
+        required : true
+    },
+    usedRounds : {
+        type : "String",
+        default : 0
     }
 })
 

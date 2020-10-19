@@ -8,6 +8,8 @@ const joi = require("joi");
 const Duel = require("../models/duel");
 const DuelRequest = require("../models/duelRequest");
 const Notification = require("../models/notification");
+const Response = require("../models/response");
+const Points = require("../models/points");
 const { async } = require("crypto-random-string");
 
 router.use(upload.single("video"));
@@ -101,12 +103,22 @@ async function saveDuel(req, res, result) {
     duration: req.body.duration,
     creator: req.body.creator,
     open: open,
+    lastPoster: req.body.creator.id,
   });
 
   try {
     const createDuel = await details.save();
 
     if (createDuel) {
+      const response = new Response({
+        responderID: req.body.creator.id,
+        responderRole: "creator",
+        video: req.body.video,
+        duelID: createDuel._id,
+      });
+
+      await response.save()
+
       const request = new DuelRequest({
         duelID: createDuel._id,
         sender: req.user.id,
@@ -150,18 +162,23 @@ router.post("/", async (req, res) => {
       });
 
       if (duel) {
+        const responses = await Response.find({ duelID: req.body.duelID });
+
         if (req.body.id) {
           const availableRequest = await DuelRequest.findOne({
             duelID: req.body.duelID,
             recipient: req.body.id,
           });
+
           if (availableRequest) {
-            return res.status(200).send({ duel, requestedToOppose: true });
+            return res
+              .status(200)
+              .send({ duel, requestedToOppose: true, responses });
           } else {
-            return res.status(200).send({ duel });
+            return res.status(200).send({ duel, responses });
           }
         } else {
-          return res.status(200).send({ duel });
+          return res.status(200).send({ duel, responses });
         }
       } else {
         return res.status(200).send({ error: "Duel not found." });
@@ -173,6 +190,8 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/accept", authenticateUser, async (req, res) => {
+  var notificationMessage = "";
+
   try {
     const duel = await Duel.findOneAndUpdate(
       { _id: req.body.duelID },
@@ -180,10 +199,22 @@ router.post("/accept", authenticateUser, async (req, res) => {
     );
 
     if (duel) {
-      const removeRequest = await DuelRequest.findOneAndDelete({
+      const requestExists = await DuelRequest.findOne({
         duelID: req.body.duelID,
-        recipient: req.user.id,
       });
+
+      if (requestExists) {
+        const removeRequest = await DuelRequest.findOneAndDelete({
+          duelID: req.body.duelID,
+          recipient: req.user.id,
+        });
+      }
+
+      if (requestExists) {
+        notificationMessage = " has accepted your duel request!";
+      } else {
+        notificationMessage = " has joined your duel!";
+      }
 
       const notification = new Notification({
         type: "DuelRequest",
@@ -202,8 +233,8 @@ router.post("/accept", authenticateUser, async (req, res) => {
 });
 
 router.post("/refuse", authenticateUser, async (req, res) => {
-  const duel = await Duel.findOne({_id : req.body.duelID})
-  console.log(duel);
+  const duel = await Duel.findOne({ _id: req.body.duelID });
+
   try {
     const removeRequest = await DuelRequest.findOneAndDelete({
       duelID: req.body.duelID,

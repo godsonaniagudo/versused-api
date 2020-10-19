@@ -14,8 +14,10 @@ const duelRoute = require("./routes/duel")
 const duelsRoute = require("./routes/duels")
 const connectionRoute = require("./routes/connection")
 const notificationsRoute = require("./routes/notifications")
+const pointsRoute = require("./routes/points")
+const responseRoute = require("./routes/response")
 
-
+//Bodyparser rules
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 50000 }))
 app.use(bodyParser.json({ limit: '2mb' }))
 app.use(cors())
@@ -35,11 +37,9 @@ app.use("/duel", duelRoute)
 app.use("/duels", duelsRoute)
 app.use("/connections", connectionRoute)
 app.use("/notifications", notificationsRoute)
+app.use("/points", pointsRoute)
+app.use("/response", responseRoute)
 
-
-// http.listen(8085, () => {
-//     console.log("Server started on port 8085");
-// })
 
 http.listen(process.env.PORT || 8085, () => {
     console.log("Server started on port 8085");
