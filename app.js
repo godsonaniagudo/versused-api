@@ -16,6 +16,7 @@ const connectionRoute = require("./routes/connection")
 const notificationsRoute = require("./routes/notifications")
 const pointsRoute = require("./routes/points")
 const responseRoute = require("./routes/response")
+const commentRoute = require("./routes/comment")
 
 //Bodyparser rules
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 50000 }))
@@ -39,6 +40,7 @@ app.use("/connections", connectionRoute)
 app.use("/notifications", notificationsRoute)
 app.use("/points", pointsRoute)
 app.use("/response", responseRoute)
+app.use("/comment", commentRoute)
 
 
 http.listen(process.env.PORT || 8085, () => {

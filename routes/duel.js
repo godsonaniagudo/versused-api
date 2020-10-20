@@ -9,6 +9,7 @@ const Duel = require("../models/duel");
 const DuelRequest = require("../models/duelRequest");
 const Notification = require("../models/notification");
 const Response = require("../models/response");
+const Comment = require("../models/comment")
 const Points = require("../models/points");
 const { async } = require("crypto-random-string");
 
@@ -161,6 +162,8 @@ router.post("/", async (req, res) => {
         duelID: req.body.duelID,
       });
 
+      const comments = await Comment.find({duelID : req.body.duelID})
+
       if (duel) {
         const responses = await Response.find({ duelID: req.body.duelID });
 
@@ -175,10 +178,10 @@ router.post("/", async (req, res) => {
               .status(200)
               .send({ duel, requestedToOppose: true, responses });
           } else {
-            return res.status(200).send({ duel, responses });
+            return res.status(200).send({ duel, responses, comments });
           }
         } else {
-          return res.status(200).send({ duel, responses });
+          return res.status(200).send({ duel, responses, comments });
         }
       } else {
         return res.status(200).send({ error: "Duel not found." });
