@@ -90,7 +90,8 @@ router.post("/profile", async (req,res) => {
         losses: user.losses,
         wins : user.wins,
         draws : user.draws,
-        profilePic : user.profilePic
+        profilePic : user.profilePic,
+        videoBio : user.videoBio
       }
 
       return res.status(200).send({user : userDetails})
@@ -100,5 +101,19 @@ router.post("/profile", async (req,res) => {
   }
 })
 
+router.post("/bioVideo", authenticateUser, async(req,res) => {
+  console.log("Setting");
+  try {
+    const setVideo = await User.findOneAndUpdate({_id : req.user.id} , {videoBio  : req.body.video}, {useFindAndModify : false})
+
+    if(setVideo){
+      res.status(200).send({response : "OK"})
+    } else {
+      res.status(200).send({error : "Could not upload video"})
+    }
+  } catch (error) {
+    res.status(200).send({error : "Could not upload video"})
+  }
+})
 
 module.exports = router;

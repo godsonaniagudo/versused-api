@@ -68,6 +68,10 @@ const schema = mongoose.Schema({
     date : {
         type : "Date",
         default : Date.now()
+    },
+    videoBio : {
+        type : "String",
+        min : 6
     }
 })
 
