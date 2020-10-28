@@ -18,6 +18,7 @@ const pointsRoute = require("./routes/points")
 const responseRoute = require("./routes/response")
 const commentRoute = require("./routes/comment")
 const bookmarksRoute = require("./routes/bookmark")
+const searchRoute = require("./routes/search")
 
 //Bodyparser rules
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 50000 }))
@@ -43,6 +44,7 @@ app.use("/points", pointsRoute)
 app.use("/response", responseRoute)
 app.use("/comment", commentRoute)
 app.use("/bookmark", bookmarksRoute)
+app.use("/search", searchRoute)
 
 
 http.listen(process.env.PORT || 8085, () => {
