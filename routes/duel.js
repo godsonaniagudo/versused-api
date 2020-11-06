@@ -11,6 +11,7 @@ const Notification = require("../models/notification");
 const Response = require("../models/response");
 const Comment = require("../models/comment")
 const Points = require("../models/points");
+const Bookmark = require("../models/bookmark")
 const { async } = require("crypto-random-string");
 
 router.use(upload.single("video"));
@@ -173,12 +174,20 @@ router.post("/", async (req, res) => {
             recipient: req.body.id,
           });
 
+          
+
+          const checkBookmarked = await Bookmark.findOne({userID : req.body.id, duelID: req.body.duelID})
+
+          const bookmarked = checkBookmarked ? true : false
+
+
+
           if (availableRequest) {
             return res
               .status(200)
-              .send({ duel, requestedToOppose: true, responses });
+              .send({ duel, requestedToOppose: true, responses, bookmarked });
           } else {
-            return res.status(200).send({ duel, responses, comments });
+            return res.status(200).send({ duel, responses, comments, bookmarked });
           }
         } else {
           return res.status(200).send({ duel, responses, comments });
@@ -261,5 +270,20 @@ router.post("/refuse", authenticateUser, async (req, res) => {
       .send({ error: "Could not refuse duel request. Please try again." });
   }
 });
+
+router.delete("/", authenticateUser, async (req,res) => {
+
+  if(req.body.duel.creator.id === req.user.id){
+    try {
+      const deleteDuel = await Duel.findOneAndDelete({_id : req.body.duel._id})
+      
+      if(deleteDuel){
+        res.status(200).send({response : "OK"})
+      }
+    } catch (error) {
+      res.status(200).send({error : "Could not delete duel."})
+    }
+  }
+})
 
 module.exports = router;
