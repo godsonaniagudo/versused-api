@@ -51,4 +51,15 @@ router.post("/remove", authenticateUser, async(req,res) => {
     }
 })
 
+router.get("/", authenticateUser, async (req,res) => {
+    try {
+        const bookmarks = await Bookmark.find({userID : req.user.id})
+
+        res.status(200).send({bookmarks})
+
+    } catch (error) {
+        res.status(200).send({error : "Could not retrieve bookmarks."})
+    }
+})
+
 module.exports = router

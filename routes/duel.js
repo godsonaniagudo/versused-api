@@ -276,6 +276,7 @@ router.delete("/", authenticateUser, async (req,res) => {
   if(req.body.duel.creator.id === req.user.id){
     try {
       const deleteDuel = await Duel.findOneAndDelete({_id : req.body.duel._id})
+      const deleteDuelBookmarks = await Bookmark.deleteMany({duelID : req.body.duel._id})
       
       if(deleteDuel){
         res.status(200).send({response : "OK"})
